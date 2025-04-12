@@ -1,0 +1,45 @@
+const gulp = require('gulp');
+const concat = require('gulp-concat-css');
+const plumber = require('gulp-plumber');
+const del = require('del');
+const browserSync = require('browser-sync').create(); 
+
+function html() {
+  return gulp.src('src/**/*.html')
+        .pipe(plumber())
+                .pipe(gulp.dest('dist/'))
+}
+
+function css() {
+  return gulp.src('src/blocks/**/*.css')
+  .pipe(plumber())
+  .pipe(concat('bundle.css'))
+  .pipe(gulp.dest('dist/'))
+}
+
+function images() {
+  return gulp.src('src/images/**/*.{jpg,png,svg,gif,ico,webp,avif}')
+  .pipe(gulp.dest('dist/images'))
+}
+
+function clean() {
+  return del('dist');
+}
+
+const build = gulp.series(clean, gulp.parallel(html, css, images));
+
+
+function watchFiles() {
+  gulp.watch(['src/**/*.html'], html);
+  gulp.watch(['src/blocks/**/*.css'], css);
+  gulp.watch(['src/images/**/*.{jpg,png,svg,gif,ico,webp,avif}'], images);
+}
+
+const watchapp = gulp.parallel(build, watchFiles);
+
+exports.html = html; 
+exports.css = css; 
+exports.images = images; 
+exports.clean = clean; 
+exports.build = build; 
+exports.watchapp = watchapp; 
